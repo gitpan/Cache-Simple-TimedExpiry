@@ -1,5 +1,5 @@
 name: Cache-Simple-TimedExpiry
-version: 0.21
+version: 0.22
 abstract: A lightweight cache with timed expiration
 author: Robert Spier <rspier@pobox.com>, Jesse Vincent <jesse@bestpractical.com>
 license: perl
@@ -9,4 +9,4 @@ requires:
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.33
+generated_by: Module::Install version 0.36
