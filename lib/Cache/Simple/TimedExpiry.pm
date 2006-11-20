@@ -4,7 +4,36 @@ use strict;
 
 use vars qw/$VERSION/;
 
-$VERSION = '0.26';
+$VERSION = '0.27';
+
+=head1 NAME
+
+Cache::Simple::TimedExpiry
+
+=head2 EXAMPLE 
+
+ package main; 
+
+ use strict; 
+ use warnings;
+ $,=' '; $|++;
+
+ use Cache::Simple::TimedExpiry;
+ my $h =  Cache::Simple::TimedExpiry->new;
+
+ $h->set( DieQuick => "No duration!", 0); 
+ print $h->elements;
+ do { $h->set($_,"Value of $_", 1); sleep 2;} 
+    for qw(Have a nice day you little monkey); 
+
+
+ print $h->elements; $h->dump; sleep 4; print $h->elements; $h->dump;
+
+ print time;
+
+
+=cut
+
 
 # 0 - expiration delay
 # 1 - hash
@@ -47,6 +76,8 @@ Return true if the cache has an entry with the key KEY
 sub has_key ($$) { # exists
   my ($self, $key) = @_;
   
+  my $time = time;
+  $self->expire($time) if ($time > $self->[3]);
   return 1 if defined $key && exists $self->[1]->{$key};
   return 0;
 }
@@ -65,9 +96,7 @@ Returns undef if there is no such entry
 sub fetch ($$) {
   my ($self,$key) = @_;
 
-  my $time = time;
   # Only expire 
-  $self->expire($time) if ($time > $self->[3]);
     unless ( $self->has_key($key)) {
           return undef;
      }
@@ -137,32 +166,6 @@ sub dump ($) {
 }
 
 
-
-=head1 NAME
-
-Cache::Simple::TimedExpiry
-
-=head2 EXAMPLE 
-
-package main;
-use strict;
-use warnings;
-
-
-my $h = new Cache::Simple::TimedExpiry;
-
-$h->set( Forever => "Don't expire", 0);
-do { $h->set($_,"Value of $_", 1); sleep 2;}  for
-  qw(Have a nice day you little monkey);
-$,=' ';
-
-print $h->elements;
-$h->dump;
-sleep 4;
-print $h->elements;
-$h->dump;
-
-print time;
 
 =head1 AUTHOR
 
